@@ -18,11 +18,11 @@ container.addEventListener('click', function(){
     analyser = audioContext.createAnalyser();
     audioSource.connect(analyser);
     analyser.connect(audioContext.destination);
-    analyser.fftSize = 64;
+    analyser.fftSize = 32;
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    const barWidth = canvas.width/bufferLength;
+    const barWidth = (canvas.width/2)/bufferLength;
     let barHeight;
     let x;
 
@@ -32,9 +32,24 @@ container.addEventListener('click', function(){
         analyser.getByteFrequencyData(dataArray);
         console.log(dataArray);
         for (let i = 0; i < bufferLength; i++){
-            barHeight = dataArray[i];
-
+            barHeight = dataArray[i] * 4;
+            const red = i * barHeight / 20;
+            const green = i * 4;
+            const blue = barHeight / 2;
             ctx.fillStyle = 'white';
+            ctx.fillRect(canvas.width/2 - x, canvas.height - barHeight - 15, barWidth, 20)
+            ctx.fillStyle = 'rgb(' + red + ',' + green + ',' + blue + ')';
+            ctx.fillRect(canvas.width/2 - x, canvas.height - barHeight, barWidth, barHeight)
+            x += barWidth;
+        }
+        for (let i = 0; i < bufferLength; i++){
+            barHeight = dataArray[i] * 4;
+            const red = i * barHeight / 20;
+            const green = i * 4;
+            const blue = barHeight / 2;
+            ctx.fillStyle = 'white';
+            ctx.fillRect(x, canvas.height - barHeight - 15, barWidth, 20)
+            ctx.fillStyle = 'rgb(' + red + ',' + green + ',' + blue + ')';
             ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight)
             x += barWidth;
         }
